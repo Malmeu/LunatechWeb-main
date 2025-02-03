@@ -7,6 +7,16 @@ import AdminBlog from './pages/AdminBlog';
 import LoginPage from './pages/LoginPage';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './contexts/AuthContext';
+import { ErrorBoundary } from 'react-error-boundary';
+
+function ErrorFallback({ error }) {
+  return (
+    <div className="text-center p-5 text-white">
+      <h1>Something went wrong:</h1>
+      <pre style={{ color: 'red' }}>{error.message}</pre>
+    </div>
+  );
+}
 
 const HomePage = () => {
   return (
@@ -32,24 +42,26 @@ const HomePage = () => {
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/admin/login" element={<LoginPage />} />
-          <Route 
-            path="/admin/blog" 
-            element={
-              <PrivateRoute>
-                <AdminBlog />
-              </PrivateRoute>
-            } 
-          />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/admin/login" element={<LoginPage />} />
+            <Route 
+              path="/admin/blog" 
+              element={
+                <PrivateRoute>
+                  <AdminBlog />
+                </PrivateRoute>
+              } 
+            />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 };
 
